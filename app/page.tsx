@@ -38,12 +38,13 @@ export default function Home() {
         console.log(message);
       });
 
-      // Use jsdelivr CDN which has better CORS support
-      const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
+      // Load from local public directory (same origin, no CORS issues)
+      const baseURL = window.location.origin;
       
       await ffmpeg.load({
         coreURL: `${baseURL}/ffmpeg-core.js`,
         wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+        workerURL: `${baseURL}/ffmpeg-core.worker.js`,
       });
 
       setFfmpegLoaded(true);
