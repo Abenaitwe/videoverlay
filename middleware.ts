@@ -5,9 +5,9 @@ export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // Add headers for SharedArrayBuffer support (required for ffmpeg.wasm)
-  // Using require-corp is safe now since we're loading from same origin
+  // Using credentialless mode to allow blob URLs while still enabling SharedArrayBuffer
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
-  response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+  response.headers.set('Cross-Origin-Embedder-Policy', 'credentialless');
 
   return response;
 }
