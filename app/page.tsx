@@ -44,7 +44,6 @@ export default function Home() {
       await ffmpeg.load({
         coreURL: `${baseURL}/ffmpeg-core.js`,
         wasmURL: `${baseURL}/ffmpeg-core.wasm`,
-        workerURL: `${baseURL}/ffmpeg-core.worker.js`,
       });
 
       setFfmpegLoaded(true);
