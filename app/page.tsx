@@ -38,18 +38,32 @@ export default function Home() {
         console.log(message);
       });
 
+      // Try loading with toBlobURL first (better for CORS), fallback to direct URLs
       const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
-      await ffmpeg.load({
-        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-      });
+      
+      try {
+        const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript');
+        const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm');
+        
+        await ffmpeg.load({
+          coreURL,
+          wasmURL,
+        });
+      } catch (blobError) {
+        console.warn('Failed to load with blob URLs, trying direct URLs:', blobError);
+        // Fallback to direct CDN URLs
+        await ffmpeg.load({
+          coreURL: `${baseURL}/ffmpeg-core.js`,
+          wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+        });
+      }
 
       setFfmpegLoaded(true);
       setLoadingMessage('');
       console.log('FFmpeg loaded successfully');
     } catch (err: any) {
       console.error('Failed to load FFmpeg:', err);
-      setError('Failed to load FFmpeg');
+      setError('Failed to load FFmpeg. Please refresh the page and try again.');
       setErrorStack(err?.stack || String(err));
       setLoadingMessage('');
     }
