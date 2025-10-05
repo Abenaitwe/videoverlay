@@ -38,12 +38,22 @@ export default function Home() {
         console.log(message);
       });
 
-      // Load from local public directory (same origin, no CORS issues)
+      // Load from local public directory and convert to blob URLs
+      // This is necessary for the ES module to work with strict COEP headers
       const baseURL = window.location.origin;
       
+      const coreURL = await toBlobURL(
+        `${baseURL}/ffmpeg-core.js`,
+        'text/javascript'
+      );
+      const wasmURL = await toBlobURL(
+        `${baseURL}/ffmpeg-core.wasm`,
+        'application/wasm'
+      );
+      
       await ffmpeg.load({
-        coreURL: `${baseURL}/ffmpeg-core.js`,
-        wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+        coreURL,
+        wasmURL,
       });
 
       setFfmpegLoaded(true);
