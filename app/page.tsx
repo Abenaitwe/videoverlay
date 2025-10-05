@@ -38,25 +38,13 @@ export default function Home() {
         console.log(message);
       });
 
-      // Try loading with toBlobURL first (better for CORS), fallback to direct URLs
-      const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
+      // Use jsdelivr CDN which has better CORS support
+      const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm';
       
-      try {
-        const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript');
-        const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm');
-        
-        await ffmpeg.load({
-          coreURL,
-          wasmURL,
-        });
-      } catch (blobError) {
-        console.warn('Failed to load with blob URLs, trying direct URLs:', blobError);
-        // Fallback to direct CDN URLs
-        await ffmpeg.load({
-          coreURL: `${baseURL}/ffmpeg-core.js`,
-          wasmURL: `${baseURL}/ffmpeg-core.wasm`,
-        });
-      }
+      await ffmpeg.load({
+        coreURL: `${baseURL}/ffmpeg-core.js`,
+        wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+      });
 
       setFfmpegLoaded(true);
       setLoadingMessage('');
